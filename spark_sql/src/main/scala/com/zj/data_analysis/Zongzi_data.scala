@@ -13,7 +13,7 @@ object Zongzi_data {
     val path = "D:\\git_respo\\spark_csv\\src\\main\\resources\\email\\zongzi_data.csv"
 
     val spark = SparkSession.builder().appName("air").master("local[4]").getOrCreate()
-    val input_data = spark.read
+    val input_data = spark.read //csv文件加载
       .option("charest", "utf-8")
       .option("header", "true")
       .option("delimiter", ",")
@@ -21,7 +21,9 @@ object Zongzi_data {
       .csv(path)
     input_data.show(3)
 
-    input_data.createOrReplaceTempView("zongzi")
+    input_data.createOrReplaceTempView("zongzi") //将Dataframe转换为表
+
+    //task1 产品价格区间数据统计
     val sql =
       """
         |SELECT price, COUNT(*) AS total_num FROM
@@ -46,10 +48,9 @@ object Zongzi_data {
           .option("header", "true")
           .save("zongzi_task1.csv")
 
+
+    
     //todo task2. 品牌人气分布也是搞一个柱形图.
-
-
-    //todo task3 获取粽子品牌数据
     val sql3 =
       """
         |SELECT a.name as pinpai, sum(CAST(regexp_replace(a.num,'\\+','') AS INT)) as num FROM
